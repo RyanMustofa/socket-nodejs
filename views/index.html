@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- <h1>WEB SOCKET</h1> -->
+    <input type="text" id="username" />
+    <button onclick="hello()">hello</button>
+
+    <div id="list-user"></div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      let socketData;
+      let listUser = document.querySelector("#list-user");
+      async function socket() {
+        socketData = io();
+        socketData.on("run", (data) => {
+          console.log(data);
+          listUser.innerHTML = `
+                <div style="margin-bottom: 20px">
+                    ${data.map((items) => {
+                      return `
+                            <div style="color: ${
+                              items.status_connection ? "green" : "red"
+                            }">${items.username}</div>
+                        `;
+                    })}
+                </div>
+            `;
+        });
+      }
+      function hello() {
+        let username = document.querySelector("#username").value;
+        // console.log("hello", username);
+        socketData.emit(
+          "test",
+          JSON.stringify({
+            username,
+            to: null,
+          })
+        );
+      }
+      (async function () {
+        await socket();
+      })();
+    </script>
+  </body>
+</html>
